@@ -1,0 +1,6 @@
+click==6.6
+Django==1.9.7
+djangorestframework==3.3.3
+ordereddict==1.1
+python-dotenv==0.5.1
+requests==2.10.0

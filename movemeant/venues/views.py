@@ -56,6 +56,9 @@ class VenueLogAPIHandler(APIView):
 class VenueCheckinAPIHandler(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
+    def get(self, request, pk, format=None):
+        return Response(status=status.HTTP_200_OK)
+
     def post(self, request, format=None):
         cohort = request.user.cohort_set.all().first()
 

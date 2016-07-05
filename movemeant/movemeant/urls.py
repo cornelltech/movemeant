@@ -27,6 +27,7 @@ urlpatterns = [
 
 VERSION = 'v1'
 urlpatterns += [
+    url(r'^api/' + VERSION + '/', include('participants.urls_api')),
     url(r'^api/' + VERSION + '/', include('venues.urls_api')),
 ]
 urlpatterns += [

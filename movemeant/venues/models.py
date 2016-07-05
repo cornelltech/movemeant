@@ -17,6 +17,16 @@ class Cohort(models.Model):
     
     def get_member_count(self):
         return self.members.all().count()
+    
+    def get_venue_count(self):
+        visits = 0
+        venueCheckins = VenueCheckin.objects.filter(cohort=self)
+        for checkin in venueCheckins:
+            visits += checkin.count 
+        return visits
+    
+    def get_reveal_count(self):
+        return self.venuereveal_set.all().count()
 
 
 class Region(models.Model):

@@ -10,12 +10,18 @@ class RegionInLine(admin.TabularInline):
 
 class CohortAdmin(admin.ModelAdmin):
     model = Cohort
-    list_display = ('name', '_total_members', 'time_created',)
+    list_display = ('name', '_total_members', '_total_venues', '_total_reveals', 'time_modified', 'time_created',)
     inlines = [
         RegionInLine,
     ]
     def _total_members(self, obj):
         return obj.get_member_count()
+
+    def _total_venues(self, obj):
+        return obj.get_venue_count()
+    
+    def _total_reveals(self, obj):
+        return obj.get_reveal_count()
 
 
 class VenueAdmin(admin.ModelAdmin):

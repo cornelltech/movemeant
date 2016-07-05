@@ -25,7 +25,29 @@ class VenueLogAPIHandler(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, format=None):
-        return Response(status=status.HTTP_200_OK)
+        response = {
+            'results': []
+        }
+
+        user = request.user
+        cohort = request.user.cohort_set.all().first()
+
+        # get all the venuecheckins for the user's cohort
+        checkins = VenueCheckin.objects.filter(cohort=cohort)
+        for checkin in checkins:
+            response['results'].append({
+                'foursquare_id': checkin.venue.foursquare_id,
+                'name': checkin.venue.name,
+                'category': checkin.venue.category,
+                'lat': checkin.venue.lat,
+                'lng': checkin.venue.lng,
+
+                'checkins': checkin.count,
+                'reveals': 0
+            })
+
+
+        return Response(response, status=status.HTTP_200_OK)
 
 
 class VenueCheckinAPIHandler(APIView):

@@ -28,6 +28,7 @@ class VenueAdmin(admin.ModelAdmin):
     model = Venue
     list_display = ('foursquare_id', 'name', 'category', 'lat', 'lng', '_total_visits', '_total_reveals', 'time_created',)
     list_display_links = ('foursquare_id',)
+    ist_filter = ('category',)
 
     def _total_visits(self, obj):
         return obj.get_total_visits()
@@ -39,10 +40,12 @@ class VenueAdmin(admin.ModelAdmin):
 class VenueCheckinAdmin(admin.ModelAdmin):
     model = VenueCheckin
     list_display = ('cohort', 'venue', 'count', 'time_created',)
+    ist_filter = ('cohort', 'venue',)
 
 class VenueRevealAdmin(admin.ModelAdmin):
     model = VenueReveal
     list_display = ('cohort', 'participant', 'venue', 'time_created',)
+    ist_filter = ('cohort', 'participant', 'venue',)
 
 
 

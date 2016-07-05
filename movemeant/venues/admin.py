@@ -40,12 +40,12 @@ class VenueAdmin(admin.ModelAdmin):
 class VenueCheckinAdmin(admin.ModelAdmin):
     model = VenueCheckin
     list_display = ('cohort', 'venue', 'count', 'time_created',)
-    list_filter = ('cohort', 'venue',)
+    list_filter = ('cohort__name', 'venue',)
 
 class VenueRevealAdmin(admin.ModelAdmin):
     model = VenueReveal
     list_display = ('cohort', 'participant', 'venue', 'time_created',)
-    list_filter = ('cohort', 'participant', 'venue',)
+    list_filter = ('cohort__name', 'participant__username', 'venue',)
 
 
 

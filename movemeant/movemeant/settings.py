@@ -45,6 +45,7 @@ THIRD_PARTY_APPS = [
 ]
 
 APPS = [
+    'participants.apps.ParticipantsConfig',
     'venues.apps.VenuesConfig',
 ]
 

@@ -27,7 +27,8 @@ class VenueLogAPIHandler(APIView):
 
     def get(self, request, format=None):
         response = {
-            'results': []
+            'results': [],
+            'count': 0
         }
 
         user = request.user
@@ -47,7 +48,7 @@ class VenueLogAPIHandler(APIView):
                 'checkins': checkin.count,
                 'reveals': checkin.venue.get_total_reveals(cohort)
             })
-
+        response['count'] = len(response['results'])
 
         return Response(response, status=status.HTTP_200_OK)
 

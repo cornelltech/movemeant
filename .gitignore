@@ -1,5 +1,8 @@
+connect.sh
+
 .env
 .DS_Store
+*.pem
 *.pyc
 *.sqlite3
 

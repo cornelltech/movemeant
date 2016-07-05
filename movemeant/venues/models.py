@@ -78,6 +78,14 @@ class Venue(models.Model):
             return self.venuereveal_set.filter(cohort=cohort).count()
         else:
             return self.venuereveal_set.all().count()
+    
+    def get_revealed_users(self, cohort):
+        users = []
+        reveals = self.venuereveal_set.filter(cohort=cohort)
+        for reveal in reveals:
+            users.append(reveal.participant.username)
+        return users
+
 
 
 class VenueCheckin(models.Model):

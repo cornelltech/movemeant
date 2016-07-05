@@ -37,6 +37,7 @@ class VenueLogAPIHandler(APIView):
         # get all the venuecheckins for the user's cohort
         checkins = VenueCheckin.objects.filter(cohort=cohort)
         for checkin in checkins:
+
             response['results'].append({
                 'id': checkin.venue.id,
                 'foursquare_id': checkin.venue.foursquare_id,
@@ -46,7 +47,8 @@ class VenueLogAPIHandler(APIView):
                 'lng': checkin.venue.lng,
 
                 'checkins': checkin.count,
-                'reveals': checkin.venue.get_total_reveals(cohort)
+                'reveals': checkin.venue.get_total_reveals(cohort),
+                'revealed_users': checkin.venue.get_revealed_users(cohort)
             })
         response['count'] = len(response['results'])
 

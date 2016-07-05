@@ -1,4 +1,5 @@
 from django.http import Http404
+from django.shortcuts import get_object_or_404
 
 from rest_framework import viewsets
 from rest_framework import permissions
@@ -36,6 +37,7 @@ class VenueLogAPIHandler(APIView):
         checkins = VenueCheckin.objects.filter(cohort=cohort)
         for checkin in checkins:
             response['results'].append({
+                'id': checkin.venue.id,
                 'foursquare_id': checkin.venue.foursquare_id,
                 'name': checkin.venue.name,
                 'category': checkin.venue.category,
@@ -43,7 +45,7 @@ class VenueLogAPIHandler(APIView):
                 'lng': checkin.venue.lng,
 
                 'checkins': checkin.count,
-                'reveals': 0
+                'reveals': checkin.venue.get_total_reveals(cohort)
             })
 
 
@@ -54,6 +56,8 @@ class VenueCheckinAPIHandler(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, format=None):
+        cohort = request.user.cohort_set.all().first()
+
         lat = self.request.data.get('lat', None)
         lng = self.request.data.get('lng', None)
 
@@ -75,7 +79,7 @@ class VenueCheckinAPIHandler(APIView):
 
                 # log the visit
                 checkin, created = VenueCheckin.objects.get_or_create(
-                    cohort = request.user.cohort_set.all().first(),
+                    cohort = cohort,
                     venue = venue
                 )
                 checkin.count = checkin.count + 1;
@@ -91,4 +95,40 @@ class VenueCheckinAPIHandler(APIView):
 
         else:
             # we need lat/lng
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class VenueRevealAPIHandler(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request, format=None):
+
+        user = request.user
+        cohort = request.user.cohort_set.all().first()
+        venue_id = request.data.get('venue_id', None)
+
+        if venue_id:
+            venue = get_object_or_404(Venue, pk=venue_id) 
+
+            VenueReveal.objects.get_or_create(
+                cohort = cohort,
+                participant = user,
+                venue = venue
+            )
+
+            response = {
+                'id': venue.id,
+                'foursquare_id': venue.foursquare_id,
+                'name': venue.name,
+                'category': venue.category,
+                'lat': venue.lat,
+                'lng': venue.lng,
+
+                'checkins': 0,
+                'reveals': venue.get_total_reveals(cohort)
+            }
+
+            return Response(response, status=status.HTTP_200_OK)
+                    
+        else:
             return Response(status=status.HTTP_400_BAD_REQUEST)

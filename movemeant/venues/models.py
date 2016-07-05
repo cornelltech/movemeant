@@ -60,15 +60,24 @@ class Venue(models.Model):
     class Meta:
         ordering = ('time_created',)
     
-    def get_total_visits(self):
-        visits = 0
-        venueCheckins = self.venuecheckin_set.all() 
+    def get_total_visits(self, cohort=None):
+        
+        count = 0
+
+        if cohort:
+            venueCheckins = self.venuecheckin_set.filter(cohort=cohort)
+        else:
+            venueCheckins = self.venuecheckin_set.all()
+ 
         for checkin in venueCheckins:
-            visits += checkin.count 
-        return visits
+            count += checkin.count 
+        return count
     
-    def get_total_reveals(self):
-        return self.venuereveal_set.all().count()
+    def get_total_reveals(self, cohort=None):
+        if cohort:
+            return self.venuereveal_set.filter(cohort=cohort).count()
+        else:
+            return self.venuereveal_set.all().count()
 
 
 class VenueCheckin(models.Model):

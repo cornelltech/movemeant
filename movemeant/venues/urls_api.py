@@ -5,4 +5,5 @@ from venues import views
 urlpatterns = [
     url(r'^venues/logs/$', views.VenueLogAPIHandler.as_view()),
     url(r'^venues/checkin/$', views.VenueCheckinAPIHandler.as_view()),      
+    url(r'^venues/reveal/$', views.VenueRevealAPIHandler.as_view()),
 ]

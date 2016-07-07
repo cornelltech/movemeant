@@ -32,31 +32,35 @@ class VenueMineCohortLogAPIHandler(APIView):
         user = request.user
         cohort = request.user.cohort_set.all().first()
 
-        ids = [ int(id) for id in request.query_params.get('ids', '').split(',') ]
-        venues = Venue.objects.filter( id__in=ids )
+        try:
+            ids = [ int(id) for id in request.query_params.get('ids', '').split(',') ]
+            venues = Venue.objects.filter( id__in=ids )
 
-        logs = []
+            logs = []
 
-        for venue in venues:
-            venue_checkin = VenueCheckin.objects.filter(cohort=cohort, venue=venue).first() 
-            if venue_checkin:
-                logs.append({
-                    'id': venue.id,
-                    'foursquare_id': venue.foursquare_id,
-                    'name': venue.name,
-                    'category': venue.category,
-                    'lat': venue.lat,
-                    'lng': venue.lng,
+            for venue in venues:
+                venue_checkin = VenueCheckin.objects.filter(cohort=cohort, venue=venue).first() 
+                if venue_checkin:
+                    logs.append({
+                        'id': venue.id,
+                        'foursquare_id': venue.foursquare_id,
+                        'name': venue.name,
+                        'category': venue.category,
+                        'lat': venue.lat,
+                        'lng': venue.lng,
 
-                    'checkins': venue_checkin.count,
+                        'checkins': venue_checkin.count,
 
-                    'reveals': venue.get_total_reveals(cohort),
-                    'revealed_users': venue.get_revealed_users(cohort)
-                })    
-            else:
-                continue
+                        'reveals': venue.get_total_reveals(cohort),
+                        'revealed_users': venue.get_revealed_users(cohort)
+                    })    
+                else:
+                    continue
 
-        return Response(logs, status=status.HTTP_200_OK)
+            return Response(logs, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        
 
 
 class VenueCohortLogAPIHandler(APIView):

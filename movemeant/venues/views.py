@@ -97,6 +97,7 @@ class VenueCohortLogAPIHandler(APIView):
                 'revealed_users': checkin.venue.get_revealed_users(cohort)
             })
         response['count'] = len(response['results'])
+        response['cohort'] = cohort.name
 
         return Response(response, status=status.HTTP_200_OK)
 

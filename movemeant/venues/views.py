@@ -38,7 +38,7 @@ class VenueMineCohortLogAPIHandler(APIView):
         logs = []
 
         for venue in venues:
-            venue_checkin = VenueCheckin.objects.filter(cohort=cohort, venue=venue) 
+            venue_checkin = VenueCheckin.objects.filter(cohort=cohort, venue=venue).first() 
             if venue_checkin:
                 logs.append({
                     'id': venue.id,

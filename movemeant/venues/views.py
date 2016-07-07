@@ -20,7 +20,46 @@ class CohortViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = CohortSerializer
 
 
-class VenueLogAPIHandler(APIView):
+class VenueMineCohortLogAPIHandler(APIView):
+    """
+    Given a list of Location ids return the basic info for that list
+            @params Ids of coords
+            @example localhost:8000/api/v1/locations?ids=1,2,3,4
+    """
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, format=None):
+        user = request.user
+        cohort = request.user.cohort_set.all().first()
+
+        ids = [ int(id) for id in request.query_params.get('ids', '').split(',') ]
+        venues = Venue.objects.filter( id__in=ids )
+
+        logs = []
+
+        for venue in venues:
+            venue_checkin = VenueCheckin.objects.filter(cohort=cohort, venue=venue) 
+            if venue_checkin:
+                logs.append({
+                    'id': venue.id,
+                    'foursquare_id': venue.foursquare_id,
+                    'name': venue.name,
+                    'category': venue.category,
+                    'lat': venue.lat,
+                    'lng': venue.lng,
+
+                    'checkins': venue_checkin.count,
+
+                    'reveals': venue.get_total_reveals(cohort),
+                    'revealed_users': venue.get_revealed_users(cohort)
+                })    
+            else:
+                continue
+
+        return Response(logs, status=status.HTTP_200_OK)
+
+
+class VenueCohortLogAPIHandler(APIView):
     """
     """
     permission_classes = (permissions.IsAuthenticated,)
@@ -47,6 +86,7 @@ class VenueLogAPIHandler(APIView):
                 'lng': checkin.venue.lng,
 
                 'checkins': checkin.count,
+
                 'reveals': checkin.venue.get_total_reveals(cohort),
                 'revealed_users': checkin.venue.get_revealed_users(cohort)
             })

@@ -8,7 +8,9 @@ router = DefaultRouter()
 router.register(r'cohorts', views.CohortViewSet)
 
 urlpatterns = [
-    url(r'^venues/logs/$', views.VenueLogAPIHandler.as_view()),
+    url(r'^my/venues/logs/$', views.VenueMineCohortLogAPIHandler.as_view()),
+
+    url(r'^venues/logs/$', views.VenueCohortLogAPIHandler.as_view()),
     url(r'^venues/checkin/$', views.VenueCheckinAPIHandler.as_view()),      
     url(r'^venues/reveal/$', views.VenueRevealAPIHandler.as_view()),
 

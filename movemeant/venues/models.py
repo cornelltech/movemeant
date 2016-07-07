@@ -87,7 +87,7 @@ class Venue(models.Model):
         return users
 
     def is_user_revealed(self, user):
-        revealed = VenueReveal.filter(participant=user, venue=self).first()
+        revealed = VenueReveal.objects.filter(participant=user, venue=self).first()
         return True if revealed else False
 
 

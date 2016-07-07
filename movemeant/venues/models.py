@@ -86,6 +86,9 @@ class Venue(models.Model):
             users.append(reveal.participant.username)
         return users
 
+    def is_user_revealed(self, user):
+        revealed = VenueReveal.filter(participant=user, venue=self).first()
+        return True if revealed else False
 
 
 class VenueCheckin(models.Model):

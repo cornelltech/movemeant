@@ -50,8 +50,9 @@ class VenueMineCohortLogAPIHandler(APIView):
                         'lng': venue.lng,
 
                         'checkins': venue_checkin.count,
-
+                        
                         'reveals': venue.get_total_reveals(cohort),
+                        'revealed': venue.is_user_revealed(user),
                         'revealed_users': venue.get_revealed_users(cohort)
                     })    
                 else:
@@ -92,6 +93,7 @@ class VenueCohortLogAPIHandler(APIView):
                 'checkins': checkin.count,
 
                 'reveals': checkin.venue.get_total_reveals(cohort),
+                'revealed': checkin.venue.is_user_revealed(user),
                 'revealed_users': checkin.venue.get_revealed_users(cohort)
             })
         response['count'] = len(response['results'])

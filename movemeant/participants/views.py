@@ -14,13 +14,15 @@ class MeAPIHandler(APIView):
 
     def get(self, request, format=None):
         user = request.user
+        cohort = user.cohort_set.all().first()
+
         response = {
             'id': user.id,
             'username': user.username,
             'email': user.email,
             'first_name': user.first_name,
             'last_name': user.last_name,
-            'cohort': user.cohort_set.all().first()
+            'cohort': cohort.name if cohort else '' 
         } 
         return Response(response, status=status.HTTP_200_OK)
 

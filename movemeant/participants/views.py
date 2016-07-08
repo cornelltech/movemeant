@@ -9,6 +9,20 @@ from rest_framework import permissions
 from venues.models import Cohort, Region
 
 
+class MeAPIHandler(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, format=None):
+        user = request.user
+        response = {
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name
+        } 
+        return Response(response, status=status.HTTP_200_OK)
+
 class UserCreateAPIHandler(APIView):
     def post(self, request, format=None):
         username = request.data.get('username', None)

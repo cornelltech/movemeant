@@ -19,7 +19,8 @@ class MeAPIHandler(APIView):
             'username': user.username,
             'email': user.email,
             'first_name': user.first_name,
-            'last_name': user.last_name
+            'last_name': user.last_name,
+            'cohort': user.cohort_set.all().first()
         } 
         return Response(response, status=status.HTTP_200_OK)
 

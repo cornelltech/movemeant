@@ -34,7 +34,7 @@ class VenueMineCohortLogAPIHandler(APIView):
 
         try:
             ids = [ int(id) for id in request.query_params.get('ids', '').split(',') ]
-            venues = Venue.objects.filter( id__in=ids ).order_by('time_modified')
+            venues = Venue.objects.filter( id__in=ids ).order_by('-time_modified')
 
             logs = []
 

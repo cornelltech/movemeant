@@ -164,7 +164,7 @@ class VenueCheckinAPIHandler(APIView):
 
             Event.objects.create(trigger="venue_checkin_pass", participant=user)
 
-            return Response(venue_serializer.data, status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_200_OK)
 
         else:
             # we need venue_id

@@ -165,15 +165,10 @@ class VenueCheckinAPIHandler(APIView):
             Event.objects.create(trigger="venue_checkin_pass", participant=user)
 
             return Response(venue_serializer.data, status=status.HTTP_200_OK)
-                
-        else:
-            # no valid venue found
-            Event.objects.create(trigger="venue_checkin_fail", participant=user)
-
-            return Response(status=status.HTTP_404_NOT_FOUND)
 
         else:
             # we need venue_id
+            Event.objects.create(trigger="venue_checkin_fail", participant=user)
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 

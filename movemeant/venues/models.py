@@ -55,7 +55,7 @@ class Venue(models.Model):
     time_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return '{name}'.format(name=self.name)
+        return u'{name}'.format(name=self.name)
 
     class Meta:
         ordering = ('time_created',)

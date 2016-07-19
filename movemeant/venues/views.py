@@ -66,6 +66,7 @@ class VenueMineCohortLogAPIHandler(APIView):
 
 class VenueCohortLogAPIHandler(APIView):
     """
+    Returns all the venues that have been logged for the user's cohort
     """
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -78,8 +79,8 @@ class VenueCohortLogAPIHandler(APIView):
         user = request.user
         cohort = request.user.cohort_set.all().first()
 
-        # get all the venuecheckins for the user's cohort
-        checkins = VenueCheckin.objects.filter(cohort=cohort)
+        # get all the venue checkins for the user's cohort
+        checkins = VenueCheckin.objects.filter(cohort=cohort).order_by('-time_modified')
         for checkin in checkins:
 
             response['results'].append({

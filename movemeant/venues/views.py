@@ -102,11 +102,8 @@ class VenueCohortLogAPIHandler(APIView):
         return Response(response, status=status.HTTP_200_OK)
 
 
-class VenueCheckinAPIHandler(APIView):
+class VenueSearchAPIHandler(APIView):
     permission_classes = (permissions.IsAuthenticated,)
-
-    def get(self, request, pk, format=None):
-        return Response(status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
         user = request.user
@@ -131,28 +128,52 @@ class VenueCheckinAPIHandler(APIView):
                 venue.lng = geo_lookup_results['lng']
                 venue.save()
 
-                # log the visit
-                checkin, created = VenueCheckin.objects.get_or_create(
-                    cohort = cohort,
-                    venue = venue
-                )
-                checkin.count = checkin.count + 1;
-                checkin.save()
-
                 venue_serializer = VenueSerializer(venue)
-
-                Event.objects.create(trigger="venue_checkin_pass", participant=user)
 
                 return Response(venue_serializer.data, status=status.HTTP_200_OK)
                 
             else:
                 # no valid venue found
-                Event.objects.create(trigger="venue_checkin_fail", participant=user)
 
                 return Response(status=status.HTTP_404_NOT_FOUND)
 
         else:
             # we need lat/lng
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class VenueCheckinAPIHandler(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request, format=None):
+        user = request.user
+        cohort = request.user.cohort_set.all().first()
+
+        venue_id = self.request.data.get('venue_id', None)
+        
+        if venue_id:
+            venue = get_object_or_404(Venue, pk=venue_id)
+    
+            # log the visit
+            checkin, created = VenueCheckin.objects.get_or_create(
+                cohort = cohort,
+                venue = venue
+            )
+            checkin.count = checkin.count + 1;
+            checkin.save()
+
+            Event.objects.create(trigger="venue_checkin_pass", participant=user)
+
+            return Response(venue_serializer.data, status=status.HTTP_200_OK)
+                
+        else:
+            # no valid venue found
+            Event.objects.create(trigger="venue_checkin_fail", participant=user)
+
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        else:
+            # we need venue_id
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 

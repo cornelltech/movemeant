@@ -10,8 +10,5 @@ class Event(models.Model):
 
     time_created = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return '{name}'.format(name=self.name)
-
     class Meta:
         ordering = ('time_created',)

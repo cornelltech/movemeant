@@ -26,7 +26,7 @@ class CohortAdmin(admin.ModelAdmin):
 
 class VenueAdmin(admin.ModelAdmin):
     model = Venue
-    list_display = ('foursquare_id', 'name', 'category', 'lat', 'lng', '_total_visits', '_total_reveals', 'time_created',)
+    list_display = ('id', 'foursquare_id', 'name', 'category', 'lat', 'lng', '_total_visits', '_total_reveals', 'time_created',)
     list_display_links = ('foursquare_id',)
     list_filter = ('category',)
 

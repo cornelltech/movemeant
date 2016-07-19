@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework import permissions
 
 from venues.models import Cohort, Region
+from events.models import Event
 
 
 class MeAPIHandler(APIView):
@@ -24,6 +25,9 @@ class MeAPIHandler(APIView):
             'last_name': user.last_name,
             'cohort': cohort.name if cohort else '' 
         } 
+
+        Event.objects.create(trigger="application_opened", participant=user)
+
         return Response(response, status=status.HTTP_200_OK)
 
 class UserCreateAPIHandler(APIView):
@@ -34,9 +38,11 @@ class UserCreateAPIHandler(APIView):
         
         if username and email and password:
             try:
-                User.objects.create_user(username=username, email=email, password=password)
+                user = User.objects.create_user(username=username, email=email, password=password)
             except Exception as e:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
+            
+            Event.objects.create(trigger="participant_created", participant=user)
             return Response(status=status.HTTP_201_CREATED)
 
         else:
@@ -47,16 +53,23 @@ class AffiliateUserWithRegionAPIHandler(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, format=None):
+        user = request.user
         zipcode = request.data.get('zipcode', None)
         if zipcode:
             region = get_object_or_404(Region, zipcode=zipcode)
             cohort = region.cohort
 
-            cohort.members.add(request.user)
+            cohort.members.add(user)
             response = {
                 'cohort': cohort.name
             }
+            
+            Event.objects.create(trigger="cohort_association_pass", participant=user)
+
             return Response(response, status=status.HTTP_200_OK)
 
         else:
+
+            Event.objects.create(trigger="cohort_association_fail", participant=user)
+
             return Response(status=status.HTTP_400_BAD_REQUEST)

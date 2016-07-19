@@ -9,8 +9,8 @@ from rest_framework import status
 
 from venues.models import Cohort, Region, Venue, VenueCheckin, VenueReveal
 from venues.serializers import CohortSerializer, VenueSerializer
-
 from venues.foursquare import search as geo_search
+from events.models import Event
 
 
 class CohortViewSet(viewsets.ReadOnlyModelViewSet):
@@ -109,6 +109,7 @@ class VenueCheckinAPIHandler(APIView):
         return Response(status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
+        user = request.user
         cohort = request.user.cohort_set.all().first()
 
         lat = self.request.data.get('lat', None)
@@ -140,10 +141,14 @@ class VenueCheckinAPIHandler(APIView):
 
                 venue_serializer = VenueSerializer(venue)
 
+                Event.objects.create(trigger="venue_checkin_pass", participant=user)
+
                 return Response(venue_serializer.data, status=status.HTTP_200_OK)
                 
             else:
                 # no valid venue found
+                Event.objects.create(trigger="venue_checkin_fail", participant=user)
+
                 return Response(status=status.HTTP_404_NOT_FOUND)
 
         else:
@@ -181,7 +186,12 @@ class VenueRevealAPIHandler(APIView):
                 'reveals': venue.get_total_reveals(cohort)
             }
 
+            Event.objects.create(trigger="venue_reveal_pass", participant=user)
+
             return Response(response, status=status.HTTP_200_OK)
                     
         else:
+            
+            Event.objects.create(trigger="venue_reveal_fail", participant=user)
+
             return Response(status=status.HTTP_400_BAD_REQUEST)

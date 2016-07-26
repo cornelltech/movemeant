@@ -46,7 +46,6 @@ THIRD_PARTY_APPS = [
 
 APPS = [
     'events.apps.EventsConfig',
-    'notifications.apps.NotificationsConfig',
     'participants.apps.ParticipantsConfig',
     'venues.apps.VenuesConfig',
 ]

@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 
 from django.db import models
 
+from venues.models import Cohort
+
 
 class Event(models.Model):
     trigger = models.CharField(max_length=500)

@@ -20,3 +20,5 @@ class VenueSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Venue
+        fields = ('id', 'name', 'foursquare_id', 'category', 'time_created', 'time_modified',)
+    

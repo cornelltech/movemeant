@@ -96,7 +96,8 @@ class VenueCohortLogAPIHandler(APIView):
 
                 'reveals': checkin.venue.get_total_reveals(cohort),
                 'revealed': checkin.venue.is_user_revealed(user),
-                'revealed_users': checkin.venue.get_revealed_users(cohort)
+                'revealed_users': checkin.venue.get_revealed_users(cohort),
+                'time_created': venue.time_created
             })
         response['count'] = len(response['results'])
         response['cohort'] = cohort.name
@@ -161,7 +162,7 @@ class VenueCheckinAPIHandler(APIView):
                 cohort = cohort,
                 venue = venue
             )
-            checkin.count = checkin.count + 1;
+            checkin.count = checkin.count + 1
             checkin.save()
 
             Event.objects.create(trigger="venue_checkin_pass", participant=user)
@@ -201,7 +202,8 @@ class VenueRevealAPIHandler(APIView):
                 'lng': venue.lng,
 
                 'checkins': 0,
-                'reveals': venue.get_total_reveals(cohort)
+                'reveals': venue.get_total_reveals(cohort),
+                'time_created': venue.time_created
             }
 
             Event.objects.create(trigger="venue_reveal_pass", participant=user)

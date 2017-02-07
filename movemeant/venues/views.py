@@ -97,7 +97,7 @@ class VenueCohortLogAPIHandler(APIView):
                 'reveals': checkin.venue.get_total_reveals(cohort),
                 'revealed': checkin.venue.is_user_revealed(user),
                 'revealed_users': checkin.venue.get_revealed_users(cohort),
-                'time_created': venue.time_created
+                'time_created': checkin.venue.time_created
             })
         response['count'] = len(response['results'])
         response['cohort'] = cohort.name

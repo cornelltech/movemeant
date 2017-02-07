@@ -53,7 +53,8 @@ class VenueMineCohortLogAPIHandler(APIView):
                         
                         'reveals': venue.get_total_reveals(cohort),
                         'revealed': venue.is_user_revealed(user),
-                        'revealed_users': venue.get_revealed_users(cohort)
+                        'revealed_users': venue.get_revealed_users(cohort),
+                        'time_created': venue.time_created
                     })    
                 else:
                     continue

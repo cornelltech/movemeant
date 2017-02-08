@@ -54,7 +54,7 @@ class VenueMineCohortLogAPIHandler(APIView):
                         'reveals': venue.get_total_reveals(cohort),
                         'revealed': venue.is_user_revealed(user),
                         'revealed_users': venue.get_revealed_users(cohort),
-                        'time_created': venue.time_created
+                        'time_modified': venue.time_modified
                     })    
                 else:
                     continue
@@ -97,7 +97,7 @@ class VenueCohortLogAPIHandler(APIView):
                 'reveals': checkin.venue.get_total_reveals(cohort),
                 'revealed': checkin.venue.is_user_revealed(user),
                 'revealed_users': checkin.venue.get_revealed_users(cohort),
-                'time_created': checkin.venue.time_created
+                'time_modified': checkin.venue.time_modified
             })
         response['count'] = len(response['results'])
         response['cohort'] = cohort.name
@@ -203,7 +203,7 @@ class VenueRevealAPIHandler(APIView):
 
                 'checkins': 0,
                 'reveals': venue.get_total_reveals(cohort),
-                'time_created': venue.time_created
+                'time_modified': venue.time_modified
             }
 
             Event.objects.create(trigger="venue_reveal_pass", participant=user)

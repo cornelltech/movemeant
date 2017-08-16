@@ -30,6 +30,8 @@ urlpatterns += [
     url(r'^api/' + VERSION + '/', include('events.urls_api')),
     url(r'^api/' + VERSION + '/', include('participants.urls_api')),
     url(r'^api/' + VERSION + '/', include('venues.urls_api')),
+    url(r'^api/' + VERSION + '/', include('push_notifications.urls_api')),
+
 ]
 urlpatterns += [
      url(r'^api/' + VERSION + '/api-token-auth/', rest_views.obtain_auth_token)

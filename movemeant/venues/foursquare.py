@@ -15,6 +15,7 @@ GEO_PROVIDER_CATEGORY_EXCLUSION = [
     "States & Municipalities"
 ]
 
+
 def process_response(response):
     """
     for now return only the first response in the search array
@@ -23,7 +24,7 @@ def process_response(response):
     for result in response['response']['venues']:
         categories = result['categories']
         if categories:
-            primary_category = [ category for category in categories if category['primary'] ][0]
+            primary_category = [category for category in categories if category['primary']][0]
             if primary_category['name'] not in GEO_PROVIDER_CATEGORY_EXCLUSION:
                 return {
                     'name': result['name'],
@@ -48,6 +49,6 @@ def search(lat, lng, radius=100):
     }
     response = requests.get(GEO_PROVIDER, params=params)
     if response.status_code == 200:
-        return process_response( response.json() )
+        return process_response(response.json())
     else:
         return None

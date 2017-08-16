@@ -8,3 +8,4 @@ connect.sh
 
 env/
 migrations/
+.idea

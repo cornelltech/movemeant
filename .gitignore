@@ -1,4 +1,5 @@
 connect.sh
+sync_db.sh
 
 .env
 .DS_Store

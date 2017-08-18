@@ -8,5 +8,4 @@ sync_db.sh
 *.sqlite3
 
 env/
-migrations/
 .idea

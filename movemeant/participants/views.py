@@ -23,25 +23,26 @@ class MeAPIHandler(APIView):
             'email': user.email,
             'first_name': user.first_name,
             'last_name': user.last_name,
-            'cohort': cohort.name if cohort else '' 
-        } 
+            'cohort': cohort.name if cohort else ''
+        }
 
         Event.objects.create(trigger="application_opened", participant=user)
 
         return Response(response, status=status.HTTP_200_OK)
+
 
 class UserCreateAPIHandler(APIView):
     def post(self, request, format=None):
         username = request.data.get('username', None)
         email = request.data.get('email', None)
         password = request.data.get('password', None)
-        
+
         if username and email and password:
             try:
                 user = User.objects.create_user(username=username, email=email, password=password)
             except Exception as e:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
-            
+
             Event.objects.create(trigger="participant_created", participant=user)
             return Response(status=status.HTTP_201_CREATED)
 
@@ -63,7 +64,7 @@ class AffiliateUserWithRegionAPIHandler(APIView):
             response = {
                 'cohort': cohort.name
             }
-            
+
             Event.objects.create(trigger="cohort_association_pass", participant=user)
 
             return Response(response, status=status.HTTP_200_OK)

@@ -33,10 +33,10 @@ class Device(models.Model):
 class PushNotification(models.Model):
     title = models.CharField(max_length=100)
     message = models.CharField(max_length=250)
-    devices = models.ManyToManyField(Device)
+    device = models.ForeignKey(Device, null=True)
 
     time_created = models.DateTimeField(auto_now_add=True)
     time_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return smart_str("{} - {} devices".format(self.title, self.devices.count()))
+        return smart_str("{} - {}".format(self.title, self.device))

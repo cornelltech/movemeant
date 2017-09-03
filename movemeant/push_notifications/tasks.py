@@ -1,6 +1,7 @@
 from __future__ import absolute_import, unicode_literals
 from random import choice
 
+from django.contrib.auth.models import User
 from celery import shared_task
 
 from .models import Device
@@ -17,6 +18,7 @@ def condition_a_check():
         user_device = user.device_set.all().first()
         user_cohort = user.cohort_set.all().first()
 
+        # types 1 and 2 check loop
         for venue_checkin in VenueCheckin.objects.filter(cohort=user_cohort):
             if venue_checkin.count > 5:  # type 1
                 message_choices = [
@@ -63,6 +65,40 @@ def condition_a_check():
                     )
                     break
 
+        # type 3 check loop
+        for member in user_cohort.members.all():
+            user_visited_places = [rv.venue for rv in user.venuereveal_set.all()]
+            member_visited_places = [rv.venue for rv in member.venuereveal_set.all()]
+
+            joint_venues = [venue for venue in user_visited_places if venue in member_visited_places]
+
+            for venue in joint_venues:
+                user_checkins_at_venue = VenueCheckin.objects.filter(cohort__members__username__contains=user.username,
+                                                                     venue=venue).first()
+                member_checkings_at_venue = VenueCheckin.objects.filter(
+                    cohort__members__username__contains=member.username, venue=venue).first()
+                if member_checkings_at_venue.count() >= 3 * user_checkins_at_venue.count():
+                    # now we have a type 3 notification
+                    message_choices = [
+                        "Someone from {cohort_name} also likes to go to {venue_name}".format(
+                            cohort_name=user_cohort.name,
+                            venue_name=venue_checkin.venue.name
+                        ),
+                        "Have you noticed anyone from {cohort_name} at {venue_name}? "
+                        "It's someone else's go-to spot".format(
+                            cohort_name=user_cohort.name,
+                            venue_name=venue_checkin.venue.name
+                        )
+                    ]
+                    member_device = member.device_set.all().first()
+                    message_selected = choice(message_choices)
+                    PushNotification.objects.create(
+                        title=message_selected,
+                        message=message_selected,
+                        device=member_device
+                    )
+                    continue
+
         # by the time we are here, it means the user hasn't received any notifications so far, today.
         # checking the last time he received a notification, will allow us
         # to send him an "open the app" reminder notification
@@ -99,4 +135,3 @@ def condition_b_check():
                     message=message,
                     device=user_device
                 )
-

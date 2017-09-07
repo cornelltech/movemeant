@@ -150,3 +150,8 @@ REST_FRAMEWORK = {
 }
 
 IONIC_TOKEN = os.getenv('IONIC_TOKEN', '')
+
+# Celery config
+REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379')
+CELERY_BROKER_URL = '{REDIS_URL}/0'.format(REDIS_URL=REDIS_URL)
+CELERY_RESULT_BACKEND = '{REDIS_URL}/1'.format(REDIS_URL=REDIS_URL)

@@ -1,9 +1,14 @@
 from __future__ import unicode_literals
 
+import json
+import requests
 from random import choice
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils.encoding import smart_str
 
 
@@ -33,10 +38,30 @@ class Device(models.Model):
 class PushNotification(models.Model):
     title = models.CharField(max_length=100)
     message = models.CharField(max_length=250)
-    devices = models.ManyToManyField(Device)
+    device = models.ForeignKey(Device, null=True)
 
     time_created = models.DateTimeField(auto_now_add=True)
     time_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return smart_str("{} - {} devices".format(self.title, self.devices.count()))
+        return smart_str("{} - {}".format(self.title, self.device))
+
+
+@receiver(post_save, sender=PushNotification)
+def issue_push_notification(sender, instance, **kwargs):
+    tokens = [instance.device.token]
+    response = requests.post(
+        'https://api.ionic.io/push/notifications',
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + settings.IONIC_TOKEN
+        },
+        data=json.dumps({
+            "tokens": tokens,
+            "profile": "push_notifications",
+            "notification": {
+                "title": instance.title,
+                "message": instance.message
+            }
+        }))
+    print response.text

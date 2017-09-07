@@ -4,20 +4,18 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Device
-from .serializers import DeviceSerializer
 
 
 class DeviceCreateView(APIView):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request, format=None):
         user = request.user
         device_token = request.data.get('device', None)
-        
-        if device_token is None:
-            return Response(status=status.HTTP_400_BAD)
 
-        
+        if device_token is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
         obj, created = Device.objects.get_or_create(
             user=user,
             token=device_token

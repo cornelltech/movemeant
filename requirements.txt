@@ -8,6 +8,7 @@ coreapi==2.3.1
 coreschema==0.0.4
 Django==1.9.7
 django-celery==3.2.1
+django-celery-beat==1.0.1
 django-cors-headers==2.1.0
 djangorestframework==3.3.3
 foursquare==1!2016.9.12

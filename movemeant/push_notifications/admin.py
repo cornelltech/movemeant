@@ -1,9 +1,15 @@
 from django.contrib import admin
 
-from .models import PushNotification
+from .models import PushNotification, Device
+
+
+class DevicesAdmin(admin.ModelAdmin):
+    list_display = ('user', 'condition')
+
 
 class PushNotificationAdmin(admin.ModelAdmin):
-    model = PushNotification
-    # list_display = ('name', '_total_members', '_total_venues', '_total_reveals', 'time_modified', 'time_created',)
+    list_display = ('title', 'device', 'time_created')
 
+
+admin.site.register(Device, DevicesAdmin)
 admin.site.register(PushNotification, PushNotificationAdmin)

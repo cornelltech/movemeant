@@ -10,6 +10,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.encoding import smart_str
+from pyfcm import FCMNotification
 
 
 class Device(models.Model):
@@ -50,18 +51,7 @@ class PushNotification(models.Model):
 @receiver(post_save, sender=PushNotification)
 def issue_push_notification(sender, instance, **kwargs):
     tokens = [instance.device.token]
-    response = requests.post(
-        'https://api.ionic.io/push/notifications',
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + settings.IONIC_TOKEN
-        },
-        data=json.dumps({
-            "tokens": tokens,
-            "profile": "push_notifications",
-            "notification": {
-                "title": instance.title,
-                "message": instance.message
-            }
-        }))
-    print response.text
+    push_service = FCMNotification(api_key=os.environ['FIREBASE_API_KEY'])
+    result = push_service.notify_multiple_devices(registration_ids=tokens, message_title=instance.title, message_body=instance.message)
+
+    print result
